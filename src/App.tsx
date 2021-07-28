@@ -1,17 +1,38 @@
+import { useState } from "react"
 import "./App.css"
-import logo from "./logo.svg"
+import TodoItem from "./TodoItem"
+import { nanoid } from "nanoid"
+
+type Todo = {
+  label: string
+  uuid: string
+}
 
 function App() {
+  const [todos, setTodos] = useState<Todo[]>([])
+
+  const createTodo = () => {
+    const newTodo: Todo = {
+      label: "",
+      uuid: nanoid(),
+    }
+
+    setTodos([...todos, newTodo])
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Little Do</p>
-        <label>
-          <input type="checkbox" />
-          <span>Build this todo list</span>
-        </label>
+        <h1>Little Do</h1>
       </header>
+      <main>
+        {todos.map((item) => (
+          <TodoItem key={item.uuid} {...item} />
+        ))}
+      </main>
+      <footer>
+        <button onClick={createTodo}>Add todo</button>
+      </footer>
     </div>
   )
 }
