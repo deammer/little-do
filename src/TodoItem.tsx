@@ -1,5 +1,12 @@
-import { ChangeEvent, FunctionComponent, KeyboardEvent, useRef } from "react"
+import {
+  ChangeEvent,
+  FunctionComponent,
+  KeyboardEvent,
+  useRef,
+  useState,
+} from "react"
 import { Todo } from "./types"
+import cx from "classnames"
 
 type Props = {
   todo: Todo
@@ -16,36 +23,67 @@ const TodoItem: FunctionComponent<Props> = ({
   onSubmit,
   deleteTodo,
 }) => {
-  const textInputRef = useRef<HTMLInputElement>(null)
+  const textInputRef = useRef<HTMLTextAreaElement>(null)
+  const [isFocused, setIsFocused] = useState(false)
 
   const toggleChecked = () => {
     updateTodo({ ...todo, checked: !todo.checked })
   }
 
-  const updateLabel = (event: ChangeEvent<HTMLInputElement>) => {
+  const updateLabel = (event: ChangeEvent<HTMLTextAreaElement>) => {
     updateTodo({ ...todo, label: event.currentTarget.value })
   }
 
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
+      event.preventDefault()
       onSubmit()
     }
   }
 
+  const takeFocus = () => {
+    setIsFocused(true)
+  }
+
+  const loseFocus = () => {
+    setIsFocused(false)
+  }
+
   return (
-    <div className="todo">
-      <input type="checkbox" checked={todo.checked} onChange={toggleChecked} />
-      <input
-        autoFocus={focused}
-        ref={textInputRef}
-        type="text"
-        defaultValue={todo.label}
-        onChange={updateLabel}
-        onKeyDown={onKeyDown}
-      />
-      <button onClick={() => deleteTodo(todo.id)} aria-label="Delete this task">
-        &times;
-      </button>
+    <div className={cx("task", { "task--checked": todo.checked })}>
+      <label className="task__checkbox-container">
+        <input
+          aria-labelledby={`task_${todo.id}_label`}
+          className="task__checkbox"
+          type="checkbox"
+          checked={todo.checked}
+          onChange={toggleChecked}
+        />
+      </label>
+      <div className="task__text-autogrow" data-replicated-value={todo.label}>
+        <textarea
+          id={`task_${todo.id}_label`}
+          className="task__text-input"
+          autoFocus={focused}
+          ref={textInputRef}
+          rows={1}
+          defaultValue={todo.label}
+          onChange={updateLabel}
+          onKeyDown={onKeyDown}
+          onFocus={takeFocus}
+          onBlur={loseFocus}
+        />
+      </div>
+      <div>
+        <button
+          className="task__delete-button"
+          onClick={() => deleteTodo(todo.id)}
+          aria-label="Delete this task"
+          style={{ opacity: isFocused ? 1 : 0 }}
+        >
+          &times;
+        </button>
+      </div>
     </div>
   )
 }

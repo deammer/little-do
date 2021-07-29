@@ -55,8 +55,8 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Little Do</h1>
+      <header className="app-header">
+        <h1 className="app-title">Today</h1>
       </header>
       <main>
         {todos.map((item) => (
@@ -71,8 +71,8 @@ function App() {
         ))}
       </main>
       <footer>
-        <button className="new-todo-button" onClick={createTodo}>
-          + Add task
+        <button className="add-task-button" onClick={createTodo}>
+          <span className="add-task-button__icon">+</span> Add task
         </button>
       </footer>
     </div>
