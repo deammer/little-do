@@ -10,11 +10,6 @@
     {
       "src": "app_icon_192.png",
       "type": "image/png",
-      "sizes": "192x192 180x180 167x167 152x152 144x144 120x120"
-    },
-    {
-      "src": "app_icon_192.png",
-      "type": "image/png",
       "sizes": "192x192"
     },
     {
