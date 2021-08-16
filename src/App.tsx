@@ -48,9 +48,30 @@ function App() {
   }
 
   const deleteTodo = (todoId: string) => {
+    const deletedTodoIndex = todos.findIndex((task) => task.id === todoId)
     const updatedTodos = todos.filter((task) => task.id !== todoId)
     setTodos(updatedTodos)
     set("todos", updatedTodos)
+
+    // Select the task either before or after the deleted one
+    const newIndex = deletedTodoIndex > 0 ? deletedTodoIndex - 1 : 0
+    setFocusedTodo(todos[newIndex].id)
+  }
+
+  const goToPreviousTask = (todoId: string) => {
+    const currentTaskIndex = todos.findIndex((task) => task.id === todoId)
+    if (currentTaskIndex > 0) {
+      setFocusedTodo(todos[currentTaskIndex - 1].id)
+    }
+  }
+
+  const goToNextTask = (todoId: string) => {
+    const currentTaskIndex = todos.findIndex((task) => task.id === todoId)
+    if (currentTaskIndex < todos.length - 1) {
+      setFocusedTodo(todos[currentTaskIndex + 1].id)
+    } else {
+      createTodo()
+    }
   }
 
   return (
@@ -67,6 +88,8 @@ function App() {
             onSubmit={createTodo}
             focused={focusedTodo === item.id}
             deleteTodo={deleteTodo}
+            goToPreviousTask={goToPreviousTask}
+            goToNextTask={goToNextTask}
           />
         ))}
       </main>

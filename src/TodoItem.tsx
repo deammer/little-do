@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   FunctionComponent,
   KeyboardEvent,
+  useEffect,
   useRef,
   useState,
 } from "react"
@@ -14,6 +15,8 @@ type Props = {
   updateTodo: (todo: Todo) => void
   deleteTodo: (id: string) => void
   onSubmit: () => void
+  goToPreviousTask: (id: string) => void
+  goToNextTask: (id: string) => void
 }
 
 const TodoItem: FunctionComponent<Props> = ({
@@ -22,9 +25,20 @@ const TodoItem: FunctionComponent<Props> = ({
   updateTodo,
   onSubmit,
   deleteTodo,
+  goToPreviousTask,
+  goToNextTask,
 }) => {
   const textInputRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
+
+  useEffect(
+    function takeFocus() {
+      if (focused && textInputRef.current) {
+        textInputRef.current.select()
+      }
+    },
+    [focused],
+  )
 
   const toggleChecked = () => {
     updateTodo({ ...todo, checked: !todo.checked })
@@ -37,7 +51,20 @@ const TodoItem: FunctionComponent<Props> = ({
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
       event.preventDefault()
-      onSubmit()
+
+      if (event.shiftKey) {
+        goToPreviousTask(todo.id)
+      } else {
+        onSubmit()
+      }
+    } else if (event.key === "ArrowUp") {
+      goToPreviousTask(todo.id)
+    } else if (event.key === "ArrowDown") {
+      goToNextTask(todo.id)
+    } else if (event.key === "Backspace") {
+      if (event.currentTarget.value.length === 0) {
+        deleteTodo(todo.id)
+      }
     }
   }
 
@@ -76,10 +103,11 @@ const TodoItem: FunctionComponent<Props> = ({
       </div>
       <div>
         <button
-          className="task__delete-button"
+          className={cx("task__delete-button", {
+            "task__delete-button--focused": isFocused,
+          })}
           onClick={() => deleteTodo(todo.id)}
           aria-label="Delete this task"
-          style={{ opacity: isFocused ? 1 : 0 }}
         >
           &times;
         </button>

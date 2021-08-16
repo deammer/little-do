@@ -123,11 +123,18 @@ body {
   background: transparent;
   border: 0;
   color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
   display: block;
   font-size: 1.5rem;
+  opacity: 0;
   padding: 0.25rem 0.5rem;
   transition: opacity 0.25s linear;
   width: 2rem;
+}
+
+.task__delete-button:focus,
+.task__delete-button.task__delete-button--focused {
+  opacity: 1 !important;
 }
 
 .add-task-button {
